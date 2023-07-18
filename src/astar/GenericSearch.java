@@ -44,8 +44,11 @@ public class GenericSearch {
         return rand.nextInt(2) + 1;
     }
 
-    public static <T> Node<MazeLocation> astar(MazeLocation initial, Predicate<MazeLocation> goalTest, Function<MazeLocation, List<MazeLocation>> successors, ToDoubleFunction<MazeLocation> heuristic,
-                                               Double[][] weightValues, Double[][] weightNode, Double[][] heuristicValues) {
+    public static <T> Node<MazeLocation> astar(MazeLocation initial, Predicate<MazeLocation> goalTest,
+                                               Function<MazeLocation, List<MazeLocation>> successors,
+                                               ToDoubleFunction<MazeLocation> heuristic,
+                                               Double[][] weightValues, Double[][] weightNode,
+                                               Double[][] heuristicValues) {
         PriorityQueue<Node<MazeLocation>> frontier = new PriorityQueue<>();
         frontier.offer(new Node<>(initial, null, 0.0, heuristic.applyAsDouble(initial)));
         Map<MazeLocation, Double> explored = new HashMap<>();
@@ -96,20 +99,20 @@ public class GenericSearch {
             explored.put(currentState, currentNode.cost);
 
             for (MazeLocation child : successors.apply(currentState)) {
-                //double g = currentNode.cost + (double) generateRandomNumber(); // расстояние от начального узла до текущего узла
-                double g = currentNode.cost + (double)1; // расстояние от начального узла до текущего узла
-                double h = heuristic.applyAsDouble(child); // эвристическая оценка расстояния от текущего узла до целевого узла
-                double f = g + h; // предполагаемая общая стоимость пути от начального узла к целевому узлу через текущий узел
+                double g = currentNode.cost + (double) generateRandomNumber(); // distance from the start node to the current node
+                //double g = currentNode.cost + (double)1; // distance from the start node to the current node
+                double h = heuristic.applyAsDouble(child); // heuristic estimation of the distance from the current node to the target node
+                double f = g + h; // estimated total cost of the path from the start node to the destination node through the current node
 
                 if (!explored.containsKey(child) || explored.get(child) > f) {
                     frontier.offer(new Node<>(child, currentNode, g, h));
-                    // Обновляем weightValues, weightNode, and heuristicValues
+                    // Updating weightValues, weightNode, and heuristicValues
                     weightValues[child.row][child.column] = g;
                     weightNode[child.row][child.column] = g - currentNode.cost;
                     heuristicValues[child.row][child.column] = h;
                 }
             }
         }
-        return null; // нет решения
+        return null; // there is no solution
     }
 }
